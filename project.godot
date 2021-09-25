@@ -1,0 +1,42 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Position2D",
+"class": "Boid",
+"language": "GDScript",
+"path": "res://scenes/Boid.gd"
+} ]
+_global_script_class_icons={
+"Boid": ""
+}
+
+[application]
+
+config/name="boids"
+run/main_scene="res://scenes/World.tscn"
+config/icon="res://icon.png"
+
+[input]
+
+debug_1={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777351,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_clear_color=Color( 0.207843, 0.341176, 0.52549, 1 )
+environment/default_environment="res://default_env.tres"
