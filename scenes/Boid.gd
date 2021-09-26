@@ -18,6 +18,8 @@ func move(delta: float, boids: Array):
 func cohesion(boids: Array) -> Vector2:
 	var center_of_mass := Vector2.ZERO
 	for boid in boids:
+		if boid == self:
+			continue
 		center_of_mass += boid.position
 	center_of_mass /= boids.size()
 

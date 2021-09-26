@@ -35,6 +35,5 @@ func spawn_boid(x: int, y: int) -> Boid:
 	boid_instance.global_position = Vector2(x, y)
 	boid_instance.rotate(rng.randf_range(0, 2 * PI))
 	boid_instance.velocity = Vector2.UP.rotated(boid_instance.rotation) * 10
-
 	add_child(boid_instance)
 	return boid_instance
