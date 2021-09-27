@@ -1,18 +1,43 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/Boid.gd" type="Script" id=1]
 [ext_resource path="res://assets/boid.png" type="Texture" id=2]
 
-[node name="Boid" type="Position2D"]
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 11.3235
+height = 1.63837
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 150.0
+
+[node name="Boid" type="Position2D" groups=[
+"boids",
+]]
 script = ExtResource( 1 )
 cohesion_strength = 0.5
-separation_strength = 2.0
 separation_distance = 25
-alignment_strength = 0.5
-alignment_distance = 10
-impulse = 0.75
-max_speed = 200
+alignment_strength = 0.25
+alignment_distance = 20
+border_strength = 1000
+impulse = 0.9
+max_speed = 1000
+
+[node name="BoidCollider" type="Area2D" parent="." groups=[
+"boid_colliders",
+]]
+
+[node name="BoidShape" type="CollisionShape2D" parent="BoidCollider"]
+position = Vector2( 0, 1.33786 )
+shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 scale = Vector2( 0.03, 0.04 )
 texture = ExtResource( 2 )
+
+[node name="NeighbourArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NeighbourArea"]
+shape = SubResource( 2 )
+
+[connection signal="area_entered" from="NeighbourArea" to="." method="_on_NeighbourArea_area_entered"]
+[connection signal="area_exited" from="NeighbourArea" to="." method="_on_NeighbourArea_area_exited"]
