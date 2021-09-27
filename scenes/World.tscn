@@ -6,7 +6,6 @@
 
 [node name="BoidGroup" type="Node2D" parent="."]
 script = ExtResource( 1 )
-initial_boids = 10
-draw_debug = true
+initial_boids = 250
 
 [node name="Background" type="Sprite" parent="."]
