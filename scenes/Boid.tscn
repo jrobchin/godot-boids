@@ -14,13 +14,14 @@ radius = 150.0
 "boids",
 ]]
 script = ExtResource( 1 )
-cohesion_strength = 0.5
+cohesion_strength = 0.1
+separation_strength = 0.5
 separation_distance = 25
-alignment_strength = 0.25
-alignment_distance = 20
-border_strength = 1000
-impulse = 0.9
+alignment_distance = 25
+border_strength = 25
+impulse = 1.0
 max_speed = 1000
+influence_strength = 5
 
 [node name="BoidCollider" type="Area2D" parent="." groups=[
 "boid_colliders",

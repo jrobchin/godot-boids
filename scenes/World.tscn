@@ -1,11 +1,14 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scenes/BoidGroup.gd" type="Script" id=1]
+[ext_resource path="res://scenes/Boid.tscn" type="PackedScene" id=2]
 
 [node name="World" type="Node2D"]
 
 [node name="BoidGroup" type="Node2D" parent="."]
 script = ExtResource( 1 )
-initial_boids = 25
+initial_velocity = 100
+initial_boids = 200
+boid_scene = ExtResource( 2 )
 
 [node name="Background" type="Sprite" parent="."]

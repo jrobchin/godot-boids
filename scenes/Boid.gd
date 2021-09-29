@@ -2,6 +2,7 @@ extends Position2D
 
 class_name Boid
 
+export var draw_debug := false
 export var cohesion_strength := 0.01
 export var separation_strength := 1.0
 export var separation_distance := 100
@@ -10,37 +11,50 @@ export var alignment_distance := 50
 export var border_strength := 350
 export var impulse := 0.5
 export var max_speed := 10
+export var influence_strength := 10
 
 var velocity := Vector2.ZERO
 var limits: Dictionary
 
+var _is_running := true
 var _positions := []
 var _neighbours := []
+var _influence := Vector2.ZERO
 var _vel_c := Vector2.ZERO
 var _vel_s := Vector2.ZERO
 var _vel_a := Vector2.ZERO
 var _vel_b := Vector2.ZERO
+var _influence_thread: Thread
+
+
+func _ready():
+	pass
+	# _influence_thread = Thread.new()
+	# var _thread_id := _influence_thread.start(self, "_calculate_influence")
 
 
 func _draw():
-	draw_line(Vector2.ZERO, _vel_c, Color.red)
-	draw_line(Vector2.ZERO, _vel_s, Color.green)
-	draw_line(Vector2.ZERO, _vel_a, Color.blue)
-	draw_line(Vector2.ZERO, _vel_b, Color.yellow)
-	for i in range(_positions.size() - 1):
-		draw_line(to_local(_positions[i]), to_local(_positions[i + 1]), Color.cyan, 1, true)
+	if draw_debug:
+		draw_line(Vector2.ZERO, _vel_c, Color.red)
+		draw_line(Vector2.ZERO, _vel_s, Color.green)
+		draw_line(Vector2.ZERO, _vel_a, Color.blue)
+		draw_line(Vector2.ZERO, _vel_b, Color.yellow)
+		for i in range(_positions.size() - 1):
+			draw_line(to_local(_positions[i]), to_local(_positions[i + 1]), Color.cyan, 1, true)
 
 
-func _process(delta):
-	move(delta)
-	_positions.append(position)
-	if _positions.size() > 250:
-		_positions.pop_front()
+func _physics_process(delta):
+	update_influence()
+	_move(delta)
 	update()
 
+	if draw_debug:
+		_positions.append(position)
+		if _positions.size() > 250:
+			_positions.pop_front()
 
-func move(delta: float):
-	var _influence = influence()
+
+func _move(delta: float):
 	velocity = lerp(velocity, velocity + _influence * delta, impulse)
 	if velocity.length() > max_speed:
 		velocity = velocity.normalized() * max_speed
@@ -48,6 +62,10 @@ func move(delta: float):
 	$Sprite.rotation = velocity.angle() + PI / 2
 
 	position = position + velocity * delta
+
+
+func update_influence():
+	_influence = influence() * influence_strength
 
 
 func influence() -> Vector2:
@@ -112,3 +130,8 @@ func _on_NeighbourArea_area_entered(area):
 func _on_NeighbourArea_area_exited(area):
 	if area.is_in_group("boid_colliders"):
 		_neighbours.remove(_neighbours.find(area.get_parent()))
+
+
+func _exit_tree():
+	_is_running = false
+	_influence_thread.wait_to_finish()
