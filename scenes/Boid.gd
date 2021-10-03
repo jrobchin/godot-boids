@@ -27,6 +27,12 @@ var _vel_b := Vector2.ZERO
 var _influence_thread: Thread
 
 
+func Initialize(_position: Vector2, _velocity: Vector2, _limits: Dictionary):
+	position = _position
+	velocity = _velocity
+	limits = _limits
+
+
 func _ready():
 	pass
 	# _influence_thread = Thread.new()
@@ -59,7 +65,7 @@ func _move(delta: float):
 	if velocity.length() > max_speed:
 		velocity = velocity.normalized() * max_speed
 
-	$Sprite.rotation = velocity.angle() + PI / 2
+	get_node("Sprite").rotation = velocity.angle() + PI / 2
 
 	position = position + velocity * delta
 
@@ -79,9 +85,6 @@ func influence() -> Vector2:
 	var n_boids_align := 0
 
 	for boid in _neighbours:
-		if boid == self:
-			continue
-
 		center_of_mass += boid.position
 
 		var vec_to = boid.position - position
@@ -93,8 +96,8 @@ func influence() -> Vector2:
 		if vec_to.length() < separation_distance:
 			_vel_s -= vec_to * separation_distance / vec_to.length()
 
-	if _neighbours.size() > 1:
-		center_of_mass /= _neighbours.size() - 1
+	if _neighbours.size() > 0:
+		center_of_mass /= _neighbours.size()
 		_vel_c = center_of_mass - position
 
 	if n_boids_align > 0:
@@ -124,6 +127,9 @@ func influence() -> Vector2:
 
 func _on_NeighbourArea_area_entered(area):
 	if area.is_in_group("boid_colliders"):
+		if area.get_parent() == self:
+			return
+
 		_neighbours.append(area.get_parent())
 
 

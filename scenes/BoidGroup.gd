@@ -26,9 +26,12 @@ func spawn_random_boids(n: int, x_min: int, x_max: int, y_min: int, y_max: int):
 
 
 func spawn_boid(x: int, y: int):
-	var boid_instance := boid_scene.instance() as Boid
-	boid_instance.position = Vector2(x, y)
-	boid_instance.velocity = Vector2.UP.rotated(rng.randf_range(0, 2 * PI)) * initial_velocity
-	boid_instance.limits = limits
+	var _position := Vector2(x, y)
+	var _velocity := Vector2.UP.rotated(rng.randf_range(0, 2 * PI)) * initial_velocity
+	var _limits = limits
+
+	var boid_instance := boid_scene.instance()
+	boid_instance.Initialize(_position, _velocity, _limits)
+
 	add_child(boid_instance)
 	boids.append(boid_instance)

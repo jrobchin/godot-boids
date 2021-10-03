@@ -14,6 +14,13 @@ radius = 150.0
 "boids",
 ]]
 script = ExtResource( 1 )
+cohesionStrength = 0.1
+separationStrength = 0.5
+separationDistance = 25.0
+alignmentDistance = 25.0
+borderStrength = 25.0
+impulse = 1.0
+maxSpeed = 200.0
 
 [node name="BoidCollider" type="Area2D" parent="." groups=[
 "boid_colliders",
@@ -33,6 +40,3 @@ texture = ExtResource( 2 )
 shape = SubResource( 2 )
 
 [node name="Node2D" type="Node2D" parent="."]
-
-[connection signal="area_entered" from="NeighbourArea" to="." method="_on_NeighbourArea_area_entered"]
-[connection signal="area_exited" from="NeighbourArea" to="." method="_on_NeighbourArea_area_exited"]
