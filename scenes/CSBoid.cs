@@ -30,13 +30,11 @@ public class CSBoid : Position2D
     [Export]
     private float influenceStrength = 10F;
 
-    [Export]
-    private int maxNeighbours = 10;
 
     public Vector2 Velocity = Vector2.Zero;
 
     private Godot.Collections.Dictionary<string, float> limits;
-    private Godot.Collections.Array<CSBoid> neighbours = new Godot.Collections.Array<CSBoid>();
+    private Godot.Collections.Dictionary<ulong, CSBoid> neighbours = new Godot.Collections.Dictionary<ulong, CSBoid>();
     private Vector2 influence;
     private Vector2 velC;
     private Vector2 velS;
@@ -90,7 +88,7 @@ public class CSBoid : Position2D
         Vector2 avgVelocity = Vector2.Zero;
         int nBoidsAlign = 0;
 
-        foreach (CSBoid boid in neighbours)
+        foreach (CSBoid boid in neighbours.Values)
         {
             centerOfMass += boid.Position;
 
@@ -152,13 +150,13 @@ public class CSBoid : Position2D
     {
         if (area.IsInGroup("boid_colliders"))
         {
-            var boid = area.GetParent<CSBoid>();
+            CSBoid boid = area.GetParent<CSBoid>();
             if (boid == this)
             {
                 return;
             }
 
-            neighbours.Add(boid);
+            neighbours[boid.GetInstanceId()] = boid;
         }
     }
 
@@ -166,7 +164,8 @@ public class CSBoid : Position2D
     {
         if (area.IsInGroup("boid_colliders"))
         {
-            neighbours.Remove(area.GetParent<CSBoid>());
+            CSBoid boid = area.GetParent<CSBoid>();
+            neighbours.Remove(boid.GetInstanceId());
         }
     }
 }
