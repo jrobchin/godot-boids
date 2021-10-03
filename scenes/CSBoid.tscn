@@ -38,5 +38,3 @@ texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NeighbourArea"]
 shape = SubResource( 2 )
-
-[node name="Node2D" type="Node2D" parent="."]
