@@ -4,8 +4,8 @@
 [ext_resource path="res://assets/boid.png" type="Texture" id=2]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 11.3235
-height = 1.63837
+radius = 5.8125
+height = 0.0
 
 [sub_resource type="CircleShape2D" id=2]
 radius = 150.0
@@ -13,28 +13,38 @@ radius = 150.0
 [node name="Boid" type="Position2D" groups=[
 "boids",
 ]]
+modulate = Color( 1.5, 1.5, 1.5, 1 )
 script = ExtResource( 1 )
 cohesionStrength = 0.1
 separationStrength = 0.5
 separationDistance = 25.0
 alignmentDistance = 25.0
 borderStrength = 25.0
-impulse = 1.0
-maxSpeed = 200.0
+impulse = 0.8
+maxSpeed = 100.0
+influenceStrength = 5.0
+maxNeighbours = 1000
 
 [node name="BoidCollider" type="Area2D" parent="." groups=[
 "boid_colliders",
 ]]
+visible = false
 
 [node name="BoidShape" type="CollisionShape2D" parent="BoidCollider"]
-position = Vector2( 0, 1.33786 )
+position = Vector2( 0, 1.08786 )
 shape = SubResource( 1 )
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2( 2.38419e-07, -1 )
+polygon = PoolVector2Array( -2.38419e-07, -3, -4, 5, -2.38419e-07, 4, 4, 5 )
+
 [node name="Sprite" type="Sprite" parent="."]
-scale = Vector2( 0.03, 0.04 )
+visible = false
+scale = Vector2( 0.02, 0.02 )
 texture = ExtResource( 2 )
 
 [node name="NeighbourArea" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NeighbourArea"]
 shape = SubResource( 2 )

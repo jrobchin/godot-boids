@@ -30,6 +30,9 @@ public class CSBoid : Position2D
     [Export]
     private float influenceStrength = 10F;
 
+    [Export]
+    private int maxNeighbours = 20;
+
 
     public Vector2 Velocity = Vector2.Zero;
 
@@ -40,20 +43,21 @@ public class CSBoid : Position2D
     private Vector2 velS;
     private Vector2 velA;
     private Vector2 velB;
-    private Sprite sprite;
 
     public override void _Ready()
     {
         GetNode<Area2D>("NeighbourArea").Connect("area_entered", this, "onNeighbourAreaAreaEntered");
         GetNode<Area2D>("NeighbourArea").Connect("area_exited", this, "onNeighbourAreaAreaExited");
-
-        sprite = GetNode<Sprite>("Sprite");
     }
 
     public override void _Process(float delta)
     {
-        updateInfluence();
         move(delta);
+    }
+
+    public override void _PhysicsProcess(float delta)
+    {
+        updateInfluence();
     }
 
     public void Initialize(Vector2 position, Vector2 velocity, Godot.Collections.Dictionary<string, float> limits)
@@ -68,7 +72,7 @@ public class CSBoid : Position2D
         Velocity = Velocity.LinearInterpolate(Velocity + influence * delta, impulse);
         Velocity.Clamped(maxSpeed);
 
-        sprite.Rotation = Velocity.Angle() + Mathf.Pi / 2;
+        Rotation = Velocity.Angle() + Mathf.Pi / 2;
 
         Position = Position + Velocity * delta;
     }
@@ -88,8 +92,10 @@ public class CSBoid : Position2D
         Vector2 avgVelocity = Vector2.Zero;
         int nBoidsAlign = 0;
 
+        int nNeighbours = 0;
         foreach (CSBoid boid in neighbours.Values)
         {
+
             centerOfMass += boid.Position;
 
             Vector2 vecTo = boid.Position - Position;
@@ -104,11 +110,14 @@ public class CSBoid : Position2D
             {
                 velS -= vecTo * separationDistance / vecTo.Length();
             }
+
+            nNeighbours++;
+            if (nNeighbours >= maxNeighbours) break;
         }
 
-        if (neighbours.Count > 0)
+        if (nNeighbours > 0)
         {
-            centerOfMass /= neighbours.Count;
+            centerOfMass /= nNeighbours;
             velC = centerOfMass - Position;
         }
 
