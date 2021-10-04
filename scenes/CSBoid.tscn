@@ -15,15 +15,7 @@ radius = 150.0
 ]]
 modulate = Color( 1.5, 1.5, 1.5, 1 )
 script = ExtResource( 1 )
-cohesionStrength = 0.1
-separationStrength = 0.5
-separationDistance = 25.0
-alignmentDistance = 25.0
-borderStrength = 25.0
-impulse = 0.8
-maxSpeed = 100.0
-influenceStrength = 5.0
-maxNeighbours = 1000
+maxNeighbours = 10
 
 [node name="BoidCollider" type="Area2D" parent="." groups=[
 "boid_colliders",

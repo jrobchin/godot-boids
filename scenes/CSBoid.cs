@@ -4,39 +4,39 @@ using static Godot.GD;
 public class CSBoid : Position2D
 {
     [Export]
-    private float cohesionStrength = 0.01F;
+    private float cohesionStrength = 0.1F;
 
     [Export]
-    private float separationStrength = 1.0F;
+    private float separationStrength = 0.5F;
 
     [Export]
-    private float separationDistance = 100F;
+    private float separationDistance = 25F;
 
     [Export]
     private float alignmentStrength = 0.1F;
 
     [Export]
-    private float alignmentDistance = 50F;
+    private float alignmentDistance = 25F;
 
     [Export]
-    private float borderStrength = 350F;
+    private float borderStrength = 25F;
 
     [Export]
-    private float impulse = 0.5F;
+    private float impulse = 0.9F;
 
     [Export]
-    private float maxSpeed = 10F;
+    private float maxSpeed = 100F;
 
     [Export]
-    private float influenceStrength = 10F;
+    private float influenceStrength = 5F;
 
     [Export]
-    private int maxNeighbours = 20;
+    private int maxNeighbours = -1;
 
 
     public Vector2 Velocity = Vector2.Zero;
 
-    private Godot.Collections.Dictionary<string, float> limits;
+    private Limits limits;
     private Godot.Collections.Dictionary<ulong, CSBoid> neighbours = new Godot.Collections.Dictionary<ulong, CSBoid>();
     private Vector2 influence;
     private Vector2 velC;
@@ -60,7 +60,7 @@ public class CSBoid : Position2D
         updateInfluence();
     }
 
-    public void Initialize(Vector2 position, Vector2 velocity, Godot.Collections.Dictionary<string, float> limits)
+    public void Initialize(Vector2 position, Vector2 velocity, Limits limits)
     {
         this.Position = position;
         this.Velocity = velocity;
@@ -70,7 +70,7 @@ public class CSBoid : Position2D
     private void move(float delta)
     {
         Velocity = Velocity.LinearInterpolate(Velocity + influence * delta, impulse);
-        Velocity.Clamped(maxSpeed);
+        Velocity = Velocity.Clamped(maxSpeed);
 
         Rotation = Velocity.Angle() + Mathf.Pi / 2;
 
@@ -112,7 +112,7 @@ public class CSBoid : Position2D
             }
 
             nNeighbours++;
-            if (nNeighbours >= maxNeighbours) break;
+            if (maxNeighbours != -1 && nNeighbours >= maxNeighbours) break;
         }
 
         if (nNeighbours > 0)
@@ -132,20 +132,20 @@ public class CSBoid : Position2D
         velS *= separationStrength;
 
         velB = Vector2.Zero;
-        if (Position.x < limits["x_min"])
+        if (Position.x < limits.XMin)
         {
             velB += Vector2.Right * borderStrength;
         }
-        else if (Position.x > limits["x_max"])
+        else if (Position.x > limits.XMax)
         {
             velB += Vector2.Left * borderStrength;
         }
 
-        if (Position.y < limits["y_min"])
+        if (Position.y < limits.YMin)
         {
             velB += Vector2.Down * borderStrength;
         }
-        else if (Position.y > limits["y_max"])
+        else if (Position.y > limits.YMax)
         {
             velB += Vector2.Up * borderStrength;
         }
