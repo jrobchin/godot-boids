@@ -64,7 +64,7 @@ public class CSBoid : Position2D
         if (IsEnemy)
         {
             GetNode<Polygon2D>("Polygon2D").Color = new Color(1, 0, 0);
-            ((CircleShape2D)GetNode<CollisionShape2D>("NeighbourArea/CollisionShape2D").Shape).Radius *= 2;
+            ((CircleShape2D)GetNode<CollisionShape2D>("NeighbourArea/CollisionShape2D").Shape).Radius *= 1.5F;
         }
     }
 
@@ -153,11 +153,11 @@ public class CSBoid : Position2D
                     nBoidsAlign++;
                     avgVelocity += boid.Velocity;
                 }
+            }
 
-                if (vecTo.Length() < separationDistance)
-                {
-                    velS -= vecTo * separationDistance / vecTo.Length();
-                }
+            if (vecTo.Length() < separationDistance)
+            {
+                velS -= vecTo * separationDistance / vecTo.Length();
             }
 
             nNeighbours++;
@@ -171,6 +171,9 @@ public class CSBoid : Position2D
             influenceVelocity += velC;
         }
 
+        velS *= separationStrength;
+        influenceVelocity += velS;
+
         if (!IsEnemy)
         {
 
@@ -182,7 +185,6 @@ public class CSBoid : Position2D
 
             velC *= cohesionStrength;
             velA *= alignmentStrength;
-            velS *= separationStrength;
 
             if (Target != null)
             {
@@ -190,7 +192,7 @@ public class CSBoid : Position2D
                 influenceVelocity += velT;
             }
 
-            influenceVelocity += velA + velS + velE;
+            influenceVelocity += velA + velE;
         }
 
         return influenceVelocity;

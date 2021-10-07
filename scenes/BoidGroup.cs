@@ -21,6 +21,9 @@ public class BoidGroup : Node2D
     [Export]
     private int numCSBoids = 150;
 
+    [Export]
+    private int numEnemyBoids = 3;
+
     private readonly Random rand = new Random();
 
     private Vector2 viewportSize;
@@ -66,13 +69,9 @@ public class BoidGroup : Node2D
         else
         {
             for (int i = 0; i < numCSBoids; i++) spawnRandomBoid(boidScenes["CSBoid"]);
+            for (int i = 0; i < numEnemyBoids; i++) spawnRandomBoid(boidScenes["NoteBoid"], true);
             for (int i = 0; i < numTriggerBoids; i++) spawnRandomBoid(boidScenes["TriggerBoid"]);
             for (int i = 0; i < numNoteBoids; i++) spawnRandomBoid(boidScenes["NoteBoid"]);
-
-            CSBoid enemyInstance = boidScenes["CSBoid"].Instance<CSBoid>();
-            enemyInstance.IsEnemy = true;
-            enemyInstance.Initialize(new Vector2(200, 200), new Vector2(100, 100), limits);
-            AddChild(enemyInstance);
         }
     }
 
@@ -88,24 +87,34 @@ public class BoidGroup : Node2D
         }
     }
 
-    private void spawnRandomBoid(PackedScene boidScene)
+    private void spawnRandomBoid(PackedScene boidScene, bool isEnemy = false)
     {
         spawnBoid(boidScene,
         new Vector2(rand.Next(limits.XMin, limits.XMax),
             rand.Next(limits.YMin, limits.YMax)),
         new Vector2(0, initialVelocity)
-            .Rotated((float)rand.NextDouble() * Mathf.Pi * 2));
+            .Rotated((float)rand.NextDouble() * Mathf.Pi * 2),
+        isEnemy);
     }
 
     private void spawnBoid(
         PackedScene boidScene,
         Vector2 position,
-        Vector2 initialVelocity
+        Vector2 initialVelocity,
+        bool isEnemy = false
     )
     {
         CSBoid boidInstance = boidScene.Instance<CSBoid>();
         boidInstance.Initialize(position, initialVelocity, limits);
-        boidInstance.Target = target;
+
+        if (isEnemy)
+        {
+            boidInstance.IsEnemy = true;
+        }
+        else
+        {
+            boidInstance.Target = target;
+        }
 
         AddChild(boidInstance);
         boids.Add(boidInstance);
