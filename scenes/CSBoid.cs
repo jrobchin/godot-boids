@@ -22,6 +22,9 @@ public class CSBoid : Position2D
     private float borderStrength = 25F;
 
     [Export]
+    private float targetStrength = 25f;
+
+    [Export]
     private float impulse = 0.9F;
 
     [Export]
@@ -33,8 +36,15 @@ public class CSBoid : Position2D
     [Export]
     private int maxNeighbours = -1;
 
+    [Export]
+    public bool IsEnemy = false;
+
+    [Export]
+    private float enemyStrength = 25f;
+
 
     public Vector2 Velocity = Vector2.Zero;
+    public Node2D Target;
 
     private Limits limits;
     private Godot.Collections.Dictionary<ulong, CSBoid> neighbours = new Godot.Collections.Dictionary<ulong, CSBoid>();
@@ -43,11 +53,19 @@ public class CSBoid : Position2D
     private Vector2 velS;
     private Vector2 velA;
     private Vector2 velB;
+    private Vector2 velT;
+    private Vector2 velE;
 
     public override void _Ready()
     {
         GetNode<Area2D>("NeighbourArea").Connect("area_entered", this, "onNeighbourAreaAreaEntered");
         GetNode<Area2D>("NeighbourArea").Connect("area_exited", this, "onNeighbourAreaAreaExited");
+
+        if (IsEnemy)
+        {
+            GetNode<Polygon2D>("Polygon2D").Color = new Color(1, 0, 0);
+            ((CircleShape2D)GetNode<CollisionShape2D>("NeighbourArea/CollisionShape2D").Shape).Radius *= 2;
+        }
     }
 
     public override void _Process(float delta)
@@ -84,54 +102,15 @@ public class CSBoid : Position2D
 
     private Vector2 calculateInfluence()
     {
+        Vector2 influenceVelocity = Vector2.Zero;
+
         velC = Vector2.Zero;
         velS = Vector2.Zero;
         velA = Vector2.Zero;
         velB = Vector2.Zero;
-        Vector2 centerOfMass = Vector2.Zero;
-        Vector2 avgVelocity = Vector2.Zero;
-        int nBoidsAlign = 0;
+        velT = Vector2.Zero;
+        velE = Vector2.Zero;
 
-        int nNeighbours = 0;
-        foreach (CSBoid boid in neighbours.Values)
-        {
-
-            centerOfMass += boid.Position;
-
-            Vector2 vecTo = boid.Position - Position;
-
-            if (vecTo.Length() < alignmentDistance)
-            {
-                nBoidsAlign++;
-                avgVelocity += boid.Velocity;
-            }
-
-            if (vecTo.Length() < separationDistance)
-            {
-                velS -= vecTo * separationDistance / vecTo.Length();
-            }
-
-            nNeighbours++;
-            if (maxNeighbours != -1 && nNeighbours >= maxNeighbours) break;
-        }
-
-        if (nNeighbours > 0)
-        {
-            centerOfMass /= nNeighbours;
-            velC = centerOfMass - Position;
-        }
-
-        if (nBoidsAlign > 0)
-        {
-            avgVelocity /= nBoidsAlign;
-            velA = avgVelocity - Velocity;
-        }
-
-        velC *= cohesionStrength;
-        velA *= alignmentStrength;
-        velS *= separationStrength;
-
-        velB = Vector2.Zero;
         if (Position.x < limits.XMin)
         {
             velB += Vector2.Right * borderStrength;
@@ -150,7 +129,69 @@ public class CSBoid : Position2D
             velB += Vector2.Up * borderStrength;
         }
 
-        Vector2 influenceVelocity = velC + velA + velS + velB;
+        influenceVelocity += velB;
+
+        Vector2 centerOfMass = Vector2.Zero;
+        Vector2 avgVelocity = Vector2.Zero;
+        int nBoidsAlign = 0;
+        int nNeighbours = 0;
+        foreach (CSBoid boid in neighbours.Values)
+        {
+
+            centerOfMass += boid.Position;
+
+            Vector2 vecTo = boid.Position - Position;
+
+            if (boid.IsEnemy)
+            {
+                velE = -vecTo.Normalized() * enemyStrength / vecTo.Length();
+            }
+            else
+            {
+                if (vecTo.Length() < alignmentDistance)
+                {
+                    nBoidsAlign++;
+                    avgVelocity += boid.Velocity;
+                }
+
+                if (vecTo.Length() < separationDistance)
+                {
+                    velS -= vecTo * separationDistance / vecTo.Length();
+                }
+            }
+
+            nNeighbours++;
+            if (maxNeighbours != -1 && nNeighbours >= maxNeighbours) break;
+        }
+
+        if (nNeighbours > 0)
+        {
+            centerOfMass /= nNeighbours;
+            velC = centerOfMass - Position;
+            influenceVelocity += velC;
+        }
+
+        if (!IsEnemy)
+        {
+
+            if (nBoidsAlign > 0)
+            {
+                avgVelocity /= nBoidsAlign;
+                velA = avgVelocity - Velocity;
+            }
+
+            velC *= cohesionStrength;
+            velA *= alignmentStrength;
+            velS *= separationStrength;
+
+            if (Target != null)
+            {
+                velT = Position.DirectionTo(Target.Position) * targetStrength;
+                influenceVelocity += velT;
+            }
+
+            influenceVelocity += velA + velS + velE;
+        }
 
         return influenceVelocity;
     }

@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scenes/BoidGroup.cs" type="Script" id=1]
+[ext_resource path="res://scenes/Target.tscn" type="PackedScene" id=2]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
 glow_enabled = true
-glow_levels/3 = false
 glow_levels/7 = true
-glow_bloom = 0.39
+glow_bloom = 0.13
 glow_blend_mode = 0
 glow_bicubic_upscale = true
 adjustment_brightness = 1.8
@@ -17,9 +17,14 @@ adjustment_brightness = 1.8
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
+[node name="Target" parent="." instance=ExtResource( 2 )]
+position = Vector2( 404.193, 296.25 )
+scale = Vector2( 0.25, 0.25 )
+
 [node name="BoidGroup" type="Node2D" parent="."]
 script = ExtResource( 1 )
 initialVelocity = 100.0
 numBoids = 30
-numTriggerBoids = 3
-numNoteBoids = 15
+numTriggerBoids = 0
+numNoteBoids = 0
+numCSBoids = 100

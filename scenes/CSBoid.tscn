@@ -8,17 +8,21 @@ radius = 5.8125
 height = 0.0
 
 [sub_resource type="CircleShape2D" id=2]
-radius = 75.0
+radius = 60.0
 
 [node name="Boid" type="Position2D" groups=[
 "boids",
 ]]
-modulate = Color( 1.5, 1.5, 1.5, 1 )
+modulate = Color( 1.1, 1.1, 1.1, 1 )
 script = ExtResource( 1 )
 cohesionStrength = 0.1
 separationDistance = 20.0
-alignmentStrength = 0.2
+alignmentStrength = 0.3
+alignmentDistance = 50.0
+targetStrength = 50.0
+impulse = 0.9
 maxSpeed = 200.0
+enemyStrength = 2000.0
 
 [node name="BoidCollider" type="Area2D" parent="." groups=[
 "boid_colliders",
