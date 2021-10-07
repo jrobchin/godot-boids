@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/g-7.ogg-e034fe872f3e41139adbbc18a0df85af.oggstr"
+
+[deps]
+
+source_file="res://assets/piano/g-7.ogg"
+dest_files=[ "res://.import/g-7.ogg-e034fe872f3e41139adbbc18a0df85af.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0
