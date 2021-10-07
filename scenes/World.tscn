@@ -19,3 +19,7 @@ environment = SubResource( 1 )
 
 [node name="BoidGroup" type="Node2D" parent="."]
 script = ExtResource( 1 )
+initialVelocity = 100.0
+numBoids = 30
+numTriggerBoids = 3
+numNoteBoids = 15

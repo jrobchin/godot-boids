@@ -155,7 +155,7 @@ public class CSBoid : Position2D
         return influenceVelocity;
     }
 
-    private void onNeighbourAreaAreaEntered(Area area)
+    protected virtual void onNeighbourAreaAreaEntered(Area area)
     {
         if (area.IsInGroup("boid_colliders"))
         {
@@ -169,7 +169,7 @@ public class CSBoid : Position2D
         }
     }
 
-    private void onNeighbourAreaAreaExited(Area area)
+    protected virtual void onNeighbourAreaAreaExited(Area area)
     {
         if (area.IsInGroup("boid_colliders"))
         {

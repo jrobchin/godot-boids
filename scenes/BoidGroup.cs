@@ -9,6 +9,15 @@ public class BoidGroup : Node2D
     [Export]
     private int numBoids = 100;
 
+    [Export]
+    private bool randomBoids = false;
+
+    [Export]
+    private int numTriggerBoids = 10;
+
+    [Export]
+    private int numNoteBoids = 10;
+
     private readonly Random rand = new Random();
 
     private Vector2 viewportSize;
@@ -25,6 +34,11 @@ public class BoidGroup : Node2D
                     "TriggerBoid",
                     ResourceLoader
                         .Load<PackedScene>("res://scenes/TriggerBoid.tscn")
+                },
+                {
+                    "NoteBoid",
+                    ResourceLoader
+                        .Load<PackedScene>("res://scenes/NoteBoid.tscn")
                 }
             };
 
@@ -33,7 +47,15 @@ public class BoidGroup : Node2D
         viewportSize = GetViewportRect().Size;
         limits = new Limits(0, (int)viewportSize.x, 0, (int)viewportSize.y);
 
-        spawnRandomBoids(numBoids);
+        if (randomBoids)
+        {
+            spawnRandomBoids(numBoids);
+        }
+        else
+        {
+            for (int i = 0; i < numTriggerBoids; i++) spawnRandomBoid(boidScenes["TriggerBoid"]);
+            for (int i = 0; i < numNoteBoids; i++) spawnRandomBoid(boidScenes["NoteBoid"]);
+        }
     }
 
     private void spawnRandomBoids(int n)
@@ -44,12 +66,17 @@ public class BoidGroup : Node2D
         for (int i = 0; i < numBoids; i++)
         {
             string boidType = boidTypes[rand.Next(boidTypes.Length)];
-            spawnBoid(boidScenes[boidType],
-            new Vector2(rand.Next(limits.XMin, limits.XMax),
-                rand.Next(limits.YMin, limits.YMax)),
-            new Vector2(0, initialVelocity)
-                .Rotated((float)rand.NextDouble() * Mathf.Pi * 2));
+            spawnRandomBoid(boidScenes[boidType]);
         }
+    }
+
+    private void spawnRandomBoid(PackedScene boidScene)
+    {
+        spawnBoid(boidScene,
+        new Vector2(rand.Next(limits.XMin, limits.XMax),
+            rand.Next(limits.YMin, limits.YMax)),
+        new Vector2(0, initialVelocity)
+            .Rotated((float)rand.NextDouble() * Mathf.Pi * 2));
     }
 
     private void spawnBoid(

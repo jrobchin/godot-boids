@@ -7,5 +7,11 @@
 script = ExtResource( 2 )
 maxNeighbours = -1
 
+[node name="BoidCollider" parent="." index="0"]
+visible = true
+
 [node name="Polygon2D" parent="." index="1"]
 color = Color( 1, 0.294118, 0.294118, 1 )
+
+[node name="NeighbourArea" parent="." index="3"]
+visible = true

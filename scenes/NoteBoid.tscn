@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/CSBoid.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/NoteBoid.cs" type="Script" id=2]
+
+[sub_resource type="Animation" id=1]
+resource_name = "PlayNote"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Polygon2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 2, 2 ), Vector2( 1, 1 ) ]
+}
+
+[node name="NoteBoid" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+soundFolder = "res://assets/piano"
+audioPlayerNodePath = NodePath("AudioStreamPlayer")
+
+[node name="BoidCollider" parent="." index="0"]
+visible = true
+
+[node name="Sprite" parent="." index="2"]
+scale = Vector2( 0.2, 0.2 )
+
+[node name="NeighbourArea" parent="." index="3"]
+visible = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="4"]
+volume_db = -6.0
+bus = "Piano"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5"]
+anims/PlayNote = SubResource( 1 )
