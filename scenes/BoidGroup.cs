@@ -13,12 +13,6 @@ public class BoidGroup : Node2D
     private bool randomBoids = false;
 
     [Export]
-    private int numTriggerBoids = 10;
-
-    [Export]
-    private int numNoteBoids = 10;
-
-    [Export]
     private int numCSBoids = 150;
 
     [Export]
@@ -43,16 +37,6 @@ public class BoidGroup : Node2D
                     ResourceLoader
                         .Load<PackedScene>("res://scenes/CSBoid.tscn")
                 },
-                {
-                    "TriggerBoid",
-                    ResourceLoader
-                        .Load<PackedScene>("res://scenes/TriggerBoid.tscn")
-                },
-                {
-                    "NoteBoid",
-                    ResourceLoader
-                        .Load<PackedScene>("res://scenes/NoteBoid.tscn")
-                }
             };
 
     public override void _Ready()
@@ -70,8 +54,6 @@ public class BoidGroup : Node2D
         {
             for (int i = 0; i < numCSBoids; i++) spawnRandomBoid(boidScenes["CSBoid"]);
             for (int i = 0; i < numEnemyBoids; i++) spawnRandomBoid(boidScenes["NoteBoid"], true);
-            for (int i = 0; i < numTriggerBoids; i++) spawnRandomBoid(boidScenes["TriggerBoid"]);
-            for (int i = 0; i < numNoteBoids; i++) spawnRandomBoid(boidScenes["NoteBoid"]);
         }
     }
 
