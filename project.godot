@@ -8,16 +8,6 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Position2D",
-"class": "Boid",
-"language": "GDScript",
-"path": "res://scenes/Boid.gd"
-} ]
-_global_script_class_icons={
-"Boid": ""
-}
-
 [application]
 
 config/name="boids"

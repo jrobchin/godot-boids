@@ -24,9 +24,7 @@ impulse = 0.9
 maxSpeed = 200.0
 enemyStrength = 2000.0
 
-[node name="BoidCollider" type="Area2D" parent="." groups=[
-"boid_colliders",
-]]
+[node name="BoidCollider" type="Area2D" parent="."]
 visible = false
 
 [node name="BoidShape" type="CollisionShape2D" parent="BoidCollider"]
@@ -42,7 +40,9 @@ visible = false
 scale = Vector2( 0.02, 0.02 )
 texture = ExtResource( 2 )
 
-[node name="NeighbourArea" type="Area2D" parent="."]
+[node name="NeighbourArea" type="Area2D" parent="." groups=[
+"boid_collider",
+]]
 visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NeighbourArea"]

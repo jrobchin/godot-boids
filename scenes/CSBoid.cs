@@ -3,6 +3,9 @@ using static Godot.GD;
 
 public class CSBoid : Position2D
 {
+    private const string BOID_AREA_GROUP = "boid_collider";
+    private const string TARGET_AREA_GROUP = "boid_target";
+
     [Export]
     private float cohesionStrength = 0.1F;
 
@@ -42,9 +45,8 @@ public class CSBoid : Position2D
     [Export]
     private float enemyStrength = 25f;
 
-
     public Vector2 Velocity = Vector2.Zero;
-    public Node2D Target;
+    public Godot.Collections.Dictionary<ulong, Node2D> Targets = new Godot.Collections.Dictionary<ulong, Node2D>();
 
     private Limits limits;
     private Godot.Collections.Dictionary<ulong, CSBoid> neighbours = new Godot.Collections.Dictionary<ulong, CSBoid>();
@@ -186,13 +188,13 @@ public class CSBoid : Position2D
             velC *= cohesionStrength;
             velA *= alignmentStrength;
 
-            if (Target != null)
-            {
-                velT = Position.DirectionTo(Target.Position) * targetStrength;
-                influenceVelocity += velT;
-            }
-
             influenceVelocity += velA + velE;
+
+            foreach (Node2D target in Targets.Values)
+            {
+                velT += Position.DirectionTo(target.Position) * targetStrength;
+            }
+            influenceVelocity += velT;
         }
 
         return influenceVelocity;
@@ -200,7 +202,7 @@ public class CSBoid : Position2D
 
     protected virtual void onNeighbourAreaAreaEntered(Area area)
     {
-        if (area.IsInGroup("boid_colliders"))
+        if (area.IsInGroup(BOID_AREA_GROUP))
         {
             CSBoid boid = area.GetParent<CSBoid>();
             if (boid == this)
@@ -210,14 +212,24 @@ public class CSBoid : Position2D
 
             neighbours[boid.GetInstanceId()] = boid;
         }
+        else if (area.IsInGroup(TARGET_AREA_GROUP))
+        {
+            Node2D target = area.GetParent<Node2D>();
+            Targets[target.GetInstanceId()] = target;
+        }
     }
 
     protected virtual void onNeighbourAreaAreaExited(Area area)
     {
-        if (area.IsInGroup("boid_colliders"))
+        if (area.IsInGroup(BOID_AREA_GROUP))
         {
             CSBoid boid = area.GetParent<CSBoid>();
             neighbours.Remove(boid.GetInstanceId());
+        }
+        else if (area.IsInGroup(TARGET_AREA_GROUP))
+        {
+            Node2D target = area.GetParent<Node2D>();
+            Targets.Remove(target.GetInstanceId());
         }
     }
 }
